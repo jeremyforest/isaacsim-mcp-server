@@ -30,7 +30,6 @@ import carb
 import omni
 import omni.usd
 import requests
-from isaacsim.core.utils.stage import add_reference_to_stage
 from pxr import Gf, Sdf, UsdGeom, UsdShade
 
 
@@ -79,7 +78,12 @@ class USDLoader:
 
         usd_prim_path = f"/World/model_{prim_id}"
 
-        # Add the USD to the stage
+        # isaacsim.core.utils is V5-only and absent on 6.x; isaacsim.core.experimental.utils is
+        # the 6.x replacement. Both are extension-scoped (only importable once Kit has enabled
+        # the owning extension), so this stays lazy -- a module-level import crashed every V6
+        # host before the extension itself finished starting.
+        from isaacsim.core.experimental.utils.impl.stage import add_reference_to_stage
+
         self.usd_prim = add_reference_to_stage(str(usd_path), usd_prim_path)
 
         print(f"Loaded USD model from {usd_path} at {usd_prim_path}")
